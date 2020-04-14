@@ -161,26 +161,51 @@ class ClockView: UIView {
             context.setLineWidth(hours.width)
             context.strokePath()
             
+            
             // hour/minute's center
+            let dotRadius: CGFloat = 6.0
+            let dotRect = CGRect(x: clockCenter.x - dotRadius, y: clockCenter.y - dotRadius, width: dotRadius * 2, height: dotRadius * 2)
+            context.addEllipse(in: dotRect)
+            context.setFillColor(hours.color.cgColor)
+            context.fillPath()
             
             
             // second hand
+            context.beginPath()
+            context.move(to: clockCenter)
+            context.addLine(to: secondHandEndPoint)
+            
+            context.setStrokeColor(seconds.color.cgColor)
+            context.setLineWidth(seconds.width)
+            context.strokePath()
             
             // second's center
-            
+            let secondDotRadius: CGFloat = 3.0
+            let secondDotRect = CGRect(x: clockCenter.x - secondDotRadius, y: clockCenter.y - secondDotRadius, width: secondDotRadius * 2, height: secondDotRadius * 2)
+            context.addEllipse(in: secondDotRect)
+            context.setFillColor(seconds.color.cgColor)
+            context.fillPath()
         }
     }
     
     @objc func timerFired(_ sender: CADisplayLink) {
         // Get current time
+        let currentTime = Date()
         
         // Get calendar and set timezone
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timezone!
         
         // Extract hour, minute, second components from current time
+        let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: currentTime)
         
         // Set above components to hours, minutes, seconds properties
+        hours.value = timeComponents.hour ?? 0
+        minutes.value = timeComponents.minute ?? 0
+        seconds.value = timeComponents.second ?? 0
         
         // Trigger a screen refresh
+        setNeedsDisplay()
         
     }
     
